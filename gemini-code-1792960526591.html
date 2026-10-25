@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางเดินเงิน Binary Option 365 วัน (Compound V2)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --table-bg: #090d16;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --hover-row: #162032;
+            --checked-row: rgba(14, 165, 233, 0.35);
+            --next-row-bg: rgba(255, 255, 255, 0.95);
+            --next-row-text: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 15px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .input-group label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .input-group input, .input-group select {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 120px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn-reset {
+            background: #475569;
+        }
+        .btn-reset:hover {
+            background: #334155;
+        }
+
+        .btn-settings {
+            background: #8b5cf6;
+        }
+        .btn-settings:hover {
+            background: #7c3aed;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        .card-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .card-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .table-container {
+            background: var(--table-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow-y: auto;
+            flex: 1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #111827;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        tbody tr:hover {
+            background-color: var(--hover-row);
+        }
+
+        tbody tr.checked-row {
+            background-color: var(--checked-row);
+        }
+
+        tbody tr.next-row {
+            background-color: var(--next-row-bg) !important;
+            color: var(--next-row-text) !important;
+            font-weight: 600;
+        }
+        tbody tr.next-row td {
+            color: var(--next-row-text) !important;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        tbody tr.next-row .text-green, 
+        tbody tr.next-row .text-red {
+            color: #0369a1 !important;
+        }
+
+        .text-green { color: var(--accent-green); }
+        .text-red { color: var(--accent-red); }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            accent-color: #0ea5e9;
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            width: 400px;
+            max-width: 90%;
+        }
+        .modal-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .color-picker-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+        .color-picker-group input[type="color"] {
+            border: none;
+            width: 35px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🎯 ตารางเดินเงิน Binary Option 365 วัน (Compound V2)</h1>
+        <div class="controls">
+            <div class="input-group">
+                <label>หน่วยเงิน</label>
+                <select id="currencySelect" onchange="handleCurrencyChange()">
+                    <option value="฿">฿ (THB)</option>
+                    <option value="$">$ (USD)</option>
+                    <option value="€">€ (EUR)</option>
+                    <option value="¥">¥ (JPY)</option>
+                    <option value="custom">กำหนดเอง</option>
+                </select>
+            </div>
+            <div class="input-group" id="customCurrencyGroup" style="display: none;">
+                <label>สัญลักษณ์เงิน</label>
+                <input type="text" id="customCurrency" value="฿" placeholder="เช่น £, ₭" oninput="saveInputsAndCalculate()">
+            </div>
+            <div class="input-group">
+                <label>ทุนเริ่มต้น (วันแรก)</label>
+                <input type="number" id="startCapital" value="1500" step="1" oninput="saveInputsAndCalculate()">
+            </div>
+            <div class="input-group">
+                <label>ขนาดไม้ (% พอร์ต)</label>
+                <input type="number" id="tradePercent" value="2" step="0.1" oninput="saveInputsAndCalculate()">
+            </div>
+            <div class="input-group">
+                <label>Payout (%)</label>
+                <input type="number" id="payoutPercent" value="85" step="1" oninput="saveInputsAndCalculate()">
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 8px;">
+                <button class="btn btn-settings" onclick="openSettings()">⚙️ ตั้งค่าสี</button>
+                <button class="btn btn-reset" onclick="resetData()">รีเซ็ตค่า</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="summary-cards">
+        <div class="card">
+            <div class="card-title">ทุนเริ่มต้นทั้งหมด</div>
+            <div class="card-value" id="sumStart">฿ 1,500.00</div>
+        </div>
+        <div class="card">
+            <div class="card-title">กำไรรวมทั้งหมด (Realized)</div>
+            <div class="card-value text-green" id="sumProfit">฿ 0.00</div>
+        </div>
+        <div class="card">
+            <div class="card-title">ยอดเงินปัจจุบัน (สิ้นสุด)</div>
+            <div class="card-value" id="sumFinal">฿ 1,500.00</div>
+        </div>
+        <div class="card">
+            <div class="card-title">จำนวนวันที่บันทึก</div>
+            <div class="card-value" id="sumDays">365 วัน</div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="moneyTable">
+            <thead>
+                <tr>
+                    <th>วันที่</th>
+                    <th>เงินต้นเริ่มต้น</th>
+                    <th>ขนาดไม้ (%)</th>
+                    <th>Payout (%)</th>
+                    <th>เงินกดเทรด</th>
+                    <th>กำไรสุทธิ</th>
+                    <th>เงินต้นสิ้นวัน</th>
+                    <th>check</th>
+                    <th>รวมกำไร</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data populated by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal ตั้งค่าสี -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>🎨 ปรับแต่งสีสันหน้าจอ</span>
+            <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="closeSettings()">✕</button>
+        </div>
+        <div class="color-picker-group">
+            <label>สีพื้นหลังช่องที่ติ๊กแล้ว (Checked)</label>
+            <input type="color" id="colorChecked" value="#0ea5e9" onchange="updateThemeColors()">
+        </div>
+        <div class="color-picker-group">
+            <label>สีพื้นหลังแถวเป้าหมายถัดไป (Next Goal)</label>
+            <input type="color" id="colorNextBg" value="#ffffff" onchange="updateThemeColors()">
+        </div>
+        <div class="color-picker-group">
+            <label>สีตัวหนังสือแถวเป้าหมายถัดไป</label>
+            <input type="color" id="colorNextText" value="#0f172a" onchange="updateThemeColors()">
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="btn" onclick="closeSettings()">บันทึก</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let customData = {};
+
+    function getCurrencySymbol() {
+        const sel = document.getElementById('currencySelect').value;
+        if (sel === 'custom') {
+            return document.getElementById('customCurrency').value || '';
+        }
+        return sel;
+    }
+
+    function formatNum(num) {
+        return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function handleCurrencyChange() {
+        const sel = document.getElementById('currencySelect').value;
+        const customGroup = document.getElementById('customCurrencyGroup');
+        if (sel === 'custom') {
+            customGroup.style.display = 'flex';
+        } else {
+            customGroup.style.display = 'none';
+        }
+        saveInputsAndCalculate();
+    }
+
+    function loadSavedData() {
+        const savedCustomData = localStorage.getItem('bo_v2_customData');
+        if (savedCustomData) customData = JSON.parse(savedCustomData);
+
+        const savedCurrencySelect = localStorage.getItem('bo_v2_currencySelect');
+        if (savedCurrencySelect) {
+            document.getElementById('currencySelect').value = savedCurrencySelect;
+            if (savedCurrencySelect === 'custom') {
+                document.getElementById('customCurrencyGroup').style.display = 'flex';
+            }
+        }
+
+        const savedCustomCurrency = localStorage.getItem('bo_v2_customCurrency');
+        if (savedCustomCurrency) document.getElementById('customCurrency').value = savedCustomCurrency;
+
+        const savedStartCapital = localStorage.getItem('bo_v2_startCapital');
+        if (savedStartCapital) document.getElementById('startCapital').value = savedStartCapital;
+
+        const savedTradePercent = localStorage.getItem('bo_v2_tradePercent');
+        if (savedTradePercent) document.getElementById('tradePercent').value = savedTradePercent;
+
+        const savedPayoutPercent = localStorage.getItem('bo_v2_payoutPercent');
+        if (savedPayoutPercent) document.getElementById('payoutPercent').value = savedPayoutPercent;
+
+        const savedColorChecked = localStorage.getItem('bo_v2_colorChecked');
+        if (savedColorChecked) {
+            document.getElementById('colorChecked').value = savedColorChecked;
+            applyColorToRoot(savedColorChecked, document.getElementById('colorNextBg').value || '#ffffff', document.getElementById('colorNextText').value || '#0f172a');
+        }
+        const savedColorNextBg = localStorage.getItem('bo_v2_colorNextBg');
+        if (savedColorNextBg) {
+            document.getElementById('colorNextBg').value = savedColorNextBg;
+            applyColorToRoot(document.getElementById('colorChecked').value || '#0ea5e9', savedColorNextBg, document.getElementById('colorNextText').value || '#0f172a');
+        }
+        const savedColorNextText = localStorage.getItem('bo_v2_colorNextText');
+        if (savedColorNextText) {
+            document.getElementById('colorNextText').value = savedColorNextText;
+            applyColorToRoot(document.getElementById('colorChecked').value || '#0ea5e9', document.getElementById('colorNextBg').value || '#ffffff', savedColorNextText);
+        }
+    }
+
+    function saveInputsAndCalculate() {
+        localStorage.setItem('bo_v2_currencySelect', document.getElementById('currencySelect').value);
+        localStorage.setItem('bo_v2_customCurrency', document.getElementById('customCurrency').value);
+        localStorage.setItem('bo_v2_startCapital', document.getElementById('startCapital').value);
+        localStorage.setItem('bo_v2_tradePercent', document.getElementById('tradePercent').value);
+        localStorage.setItem('bo_v2_payoutPercent', document.getElementById('payoutPercent').value);
+        calculateTable();
+    }
+
+    function calculateTable() {
+        const startCapitalInput = parseFloat(document.getElementById('startCapital').value) || 1500;
+        const tradePercent = parseFloat(document.getElementById('tradePercent').value) || 2;
+        const payoutPercent = parseFloat(document.getElementById('payoutPercent').value) || 85;
+        const curr = getCurrencySymbol();
+
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+
+        let currentCapital = startCapitalInput;
+        let totalProfitReal = 0;
+        let totalDays = 365;
+
+        let lastCheckedDay = 0;
+        for (let i = 1; i <= totalDays; i++) {
+            if (customData[i] && customData[i].checked) {
+                lastCheckedDay = i;
+            }
+        }
+        let nextTargetDay = lastCheckedDay + 1;
+
+        for (let i = 1; i <= totalDays; i++) {
+            let dayStartCapital = currentCapital;
+            
+            // 1. ขนาดไม้กดเทรด ($) ตาม % ของพอร์ต
+            let tradeAmount = dayStartCapital * (tradePercent / 100);
+            
+            // 2. กำไรสุทธิเมื่อชนะตาม Payout (%)
+            let profitReal = tradeAmount * (payoutPercent / 100);
+            
+            let dayEndCapital = dayStartCapital + profitReal;
+            let totalProfitSoFar = totalProfitReal + profitReal;
+
+            let saved = customData[i] || { checked: false };
+
+            let row = document.createElement('tr');
+            if (saved.checked) {
+                row.className = 'checked-row';
+            } else if (i === nextTargetDay) {
+                row.className = 'next-row';
+            }
+
+            row.innerHTML = `
+                <td>วันที่ ${i}</td>
+                <td>${curr} ${formatNum(dayStartCapital)}</td>
+                <td class="${i === nextTargetDay ? '' : 'text-green'}">${tradePercent}%</td>
+                <td style="color: #38bdf8; font-weight: 500;">${payoutPercent}%</td>
+                <td style="font-weight: 600; color: ${i === nextTargetDay ? 'var(--next-row-text)' : '#38bdf8'};">${curr} ${formatNum(tradeAmount)}</td>
+                <td class="${i === nextTargetDay ? '' : 'text-green'}">${curr} ${formatNum(profitReal)}</td>
+                <td>${curr} ${formatNum(dayEndCapital)}</td>
+                <td style="text-align: center;">
+                    <input type="checkbox" class="checkbox-custom" ${saved.checked ? 'checked' : ''} onchange="updateCheck(${i}, this.checked)">
+                </td>
+                <td class="${totalProfitSoFar >= 0 ? (i === nextTargetDay ? '' : 'text-green') : 'text-red'}">${curr} ${formatNum(totalProfitSoFar)}</td>
+            `;
+
+            tableBody.appendChild(row);
+
+            currentCapital = dayEndCapital;
+            totalProfitReal = totalProfitSoFar;
+        }
+
+        document.getElementById('sumStart').innerText = `${curr} ${formatNum(startCapitalInput)}`;
+        document.getElementById('sumProfit').innerText = `${curr} ${formatNum(totalProfitReal)}`;
+        document.getElementById('sumProfit').className = `card-value ${totalProfitReal >= 0 ? 'text-green' : 'text-red'}`;
+        document.getElementById('sumFinal').innerText = `${curr} ${formatNum(currentCapital)}`;
+        document.getElementById('sumDays').innerText = totalDays + ' วัน';
+    }
+
+    function updateCheck(day, isChecked) {
+        if (!customData[day]) {
+            customData[day] = {};
+        }
+        customData[day].checked = isChecked;
+        localStorage.setItem('bo_v2_customData', JSON.stringify(customData));
+        calculateTable();
+    }
+
+    function openSettings() {
+        document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function closeSettings() {
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function applyColorToRoot(checkedColor, nextBg, nextText) {
+        let r = parseInt(checkedColor.slice(1,3), 16);
+        let g = parseInt(checkedColor.slice(3,5), 16);
+        let b = parseInt(checkedColor.slice(5,7), 16);
+        
+        document.documentElement.style.setProperty('--checked-row', `rgba(${r}, ${g}, ${b}, 0.35)`);
+        document.documentElement.style.setProperty('--next-row-bg', nextBg);
+        document.documentElement.style.setProperty('--next-row-text', nextText);
+    }
+
+    function updateThemeColors() {
+        const checkedColor = document.getElementById('colorChecked').value;
+        const nextBg = document.getElementById('colorNextBg').value;
+        const nextText = document.getElementById('colorNextText').value;
+
+        localStorage.setItem('bo_v2_colorChecked', checkedColor);
+        localStorage.setItem('bo_v2_colorNextBg', nextBg);
+        localStorage.setItem('bo_v2_colorNextText', nextText);
+
+        applyColorToRoot(checkedColor, nextBg, nextText);
+        calculateTable();
+    }
+
+    function resetData() {
+        if (confirm('คุณต้องการรีเซ็ตข้อมูลทั้งหมดในตาราง Binary Option หรือไม่?')) {
+            localStorage.removeItem('bo_v2_customData');
+            localStorage.removeItem('bo_v2_currencySelect');
+            localStorage.removeItem('bo_v2_customCurrency');
+            localStorage.removeItem('bo_v2_startCapital');
+            localStorage.removeItem('bo_v2_tradePercent');
+            localStorage.removeItem('bo_v2_payoutPercent');
+            localStorage.removeItem('bo_v2_colorChecked');
+            localStorage.removeItem('bo_v2_colorNextBg');
+            localStorage.removeItem('bo_v2_colorNextText');
+            
+            customData = {};
+            document.getElementById('currencySelect').value = '฿';
+            document.getElementById('customCurrencyGroup').style.display = 'none';
+            document.getElementById('startCapital').value = 1500;
+            document.getElementById('tradePercent').value = 2;
+            document.getElementById('payoutPercent').value = 85;
+            document.getElementById('colorChecked').value = '#0ea5e9';
+            document.getElementById('colorNextBg').value = '#ffffff';
+            document.getElementById('colorNextText').value = '#0f172a';
+            applyColorToRoot('#0ea5e9', '#ffffff', '#0f172a');
+            calculateTable();
+        }
+    }
+
+    window.onload = function() {
+        loadSavedData();
+        calculateTable();
+    };
+</script>
+
+</body>
+</html>
